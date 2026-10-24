@@ -4,7 +4,7 @@ resource "oci_core_volume" "free" {
   compartment_id      = var.compartment_ocid
   availability_domain = local.ad
   display_name        = "${var.project_name}-volume"
-  size_in_gbs         = 50
+  size_in_gbs         = 100
 }
 
 resource "oci_core_volume_attachment" "free" {

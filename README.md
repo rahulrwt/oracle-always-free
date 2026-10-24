@@ -8,7 +8,7 @@ Terraform setup for Oracle Cloud Infrastructure (OCI) Always Free resources in t
 |---|---|
 | VCN | 1 public VCN + subnet + internet gateway |
 | Compute | 2 instances (AMD `VM.Standard.E2.1.Micro` **or** Ampere A1 `VM.Standard.A1.Flex`) |
-| Block Volume | 1 × 50 GB volume attached to the first instance |
+| Block Volume | 1 × 100 GB volume attached to the first instance (uses the remaining 100 GB of the 200 GB free allowance) |
 | Object Storage | 1 bucket |
 | Load Balancer | 1 Flexible LB pinned to 10 Mbps |
 | Monitoring | Notification topic + CPU alarm |
