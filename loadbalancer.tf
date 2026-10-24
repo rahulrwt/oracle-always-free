@@ -58,3 +58,35 @@ resource "oci_load_balancer_listener" "http" {
   port                     = 80
   protocol                 = "HTTP"
 }
+
+locals {
+  lb_https_enabled = var.lb_certificate_private_key != "" && var.lb_certificate_public_certificate != ""
+}
+
+resource "oci_load_balancer_certificate" "free" {
+  count = var.enable_load_balancer && local.lb_https_enabled ? 1 : 0
+
+  load_balancer_id   = oci_load_balancer_load_balancer.free[0].id
+  certificate_name   = "${var.project_name}-cert"
+  private_key        = var.lb_certificate_private_key
+  public_certificate = var.lb_certificate_public_certificate
+  ca_certificate     = var.lb_certificate_chain
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "oci_load_balancer_listener" "https" {
+  count = var.enable_load_balancer && local.lb_https_enabled ? 1 : 0
+
+  load_balancer_id         = oci_load_balancer_load_balancer.free[0].id
+  name                     = "https-listener"
+  default_backend_set_name = oci_load_balancer_backend_set.http[0].name
+  port                     = 443
+  protocol                 = "HTTPS"
+
+  ssl_configuration {
+    certificate_name = oci_load_balancer_certificate.free[0].certificate_name
+  }
+}

@@ -8,7 +8,7 @@ Terraform setup for Oracle Cloud Infrastructure (OCI) **Always Free** resources 
 |---|---|
 | VCN | 1 public VCN + subnet + internet gateway |
 | Compute | 2 × AMD `VM.Standard.E2.1.Micro` **or** 1 × Ampere A1 `VM.Standard.A1.Flex` (2 OCPU / 12 GB) |
-| Block Volume | 1 × 100 GB volume attached to the first instance (uses the remaining 100 GB of the 200 GB free allowance) |
+| Block Volume | 1 × 50 GB volume attached to the first instance by default (adjustable; keep total boot+block ≤ 200 GB) |
 | Object Storage | 1 private bucket |
 | Load Balancer | 1 Flexible LB pinned to 10 Mbps |
 | Monitoring | Notification topic + CPU alarm |
@@ -102,13 +102,22 @@ For a personal Free Tier account, use the **root compartment** OCID.
 
    The SSH public key is read from the file path. Make sure the file exists.
 
-3. Review the optional service toggles:
+3. Review the optional service toggles and security settings:
 
    ```hcl
    use_amd_micro         = false   # set true only if VM.Standard.E2.1.Micro is available
    enable_autonomous_db  = false   # set true + provide autonomous_db_password to create DB
    email_domain_name     = ""      # set to yourdomain.com to enable Email Delivery
    notification_email    = ""      # email for CPU alarm notifications
+
+   # Security: restrict to your own public IP (e.g. "203.0.113.10/32")
+   allowed_ssh_cidr      = ""
+   bastion_client_cidr   = ""      # defaults to allowed_ssh_cidr if empty
+
+   # HTTPS on the load balancer (optional; requires a TLS certificate)
+   # lb_certificate_private_key        = file("~/.certs/key.pem")
+   # lb_certificate_public_certificate = file("~/.certs/cert.pem")
+   # lb_certificate_chain              = file("~/.certs/chain.pem")
    ```
 
 ---
@@ -157,10 +166,19 @@ Once DNS propagates, the domain status in OCI becomes **ACTIVE** and the approve
 
 ---
 
+## Security notes
+
+- **SSH access:** By default no SSH ingress rule is created. Set `allowed_ssh_cidr` to your public IP with a `/32` mask (e.g. `203.0.113.10/32`) to enable it. Leaving it blank means SSH is not allowed from the internet.
+- **Bastion:** The Bastion client allow-list defaults to `allowed_ssh_cidr`. Set `bastion_client_cidr` to override it. If you do not need Bastion, set `enable_bastion = false`.
+- **HTTPS:** The load balancer listens on HTTP port 80 by default. To add HTTPS on port 443, provide a valid TLS certificate via `lb_certificate_private_key`, `lb_certificate_public_certificate`, and optionally `lb_certificate_chain`.
+- **Vault:** The vault is created with `vault_type = "VIRTUAL"`, which is included in Always Free. Do not change it to `"PRIVATE"`; Virtual Private Vaults are billable.
+
+---
+
 ## Always Free limits to watch
 
 - **Compute:** 2 × `VM.Standard.E2.1.Micro` **or** up to 2 OCPU / 12 GB total of `VM.Standard.A1.Flex`.
-- **Block Volume:** 200 GB total across boot and block volumes. This config uses the full 200 GB.
+- **Block Volume:** 200 GB total across boot and block volumes. The default config uses 150 GB (2 × 50 GB boot + 50 GB block). Increase `block_volume_size` only if you have remaining quota.
 - **Load Balancer:** Flexible shape must stay at **10 Mbps min / 10 Mbps max**.
 - **Object Storage:** 20 GB combined across Standard / Infrequent Access / Archive.
 - **Email Delivery:** 3,000 emails / month.

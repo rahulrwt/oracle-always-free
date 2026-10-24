@@ -53,6 +53,18 @@ variable "public_subnet_cidr" {
   default     = "10.0.1.0/24"
 }
 
+variable "allowed_ssh_cidr" {
+  description = "Your public IP CIDR block for SSH access (e.g. 203.0.113.10/32). Leave empty to disable SSH ingress."
+  type        = string
+  default     = ""
+}
+
+variable "bastion_client_cidr" {
+  description = "CIDR block allowed to connect to the Bastion. Defaults to allowed_ssh_cidr if empty."
+  type        = string
+  default     = ""
+}
+
 variable "use_amd_micro" {
   description = "If true, create VM.Standard.E2.1.Micro instances; otherwise create Ampere A1 Flex instances"
   type        = bool
@@ -62,6 +74,12 @@ variable "use_amd_micro" {
 variable "enable_block_volume" {
   type    = bool
   default = true
+}
+
+variable "block_volume_size" {
+  description = "Size of the additional block volume in GB. Keep total boot+block volume usage at or below 200 GB."
+  type        = number
+  default     = 50
 }
 
 variable "enable_object_storage" {
@@ -116,6 +134,25 @@ variable "email_domain_name" {
 
 variable "email_sender_address" {
   description = "Approved sender address for OCI Email Delivery. Defaults to noreply@<email_domain_name> if empty."
+  type        = string
+  default     = ""
+}
+
+variable "lb_certificate_private_key" {
+  description = "Private key PEM for the load balancer HTTPS certificate. If provided, an HTTPS listener on port 443 is created."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "lb_certificate_public_certificate" {
+  description = "Public certificate PEM for the load balancer HTTPS certificate. Required if private key is provided."
+  type        = string
+  default     = ""
+}
+
+variable "lb_certificate_chain" {
+  description = "Certificate chain PEM for the load balancer HTTPS certificate (optional)."
   type        = string
   default     = ""
 }
