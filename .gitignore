@@ -5,3 +5,6 @@ terraform.tfstate.backup
 *.tfvars
 !terraform.tfvars.example
 .terraform.lock.hcl
+__pycache__/
+*.pyc
+

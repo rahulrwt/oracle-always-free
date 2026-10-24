@@ -1,9 +1,9 @@
-tenancy_ocid     = "ocid1.tenancy.oc1..xxxxxxxx"
-user_ocid        = "ocid1.user.oc1..xxxxxxxx"
-fingerprint      = "aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99"
+tenancy_ocid     = "ocid1.tenancy.oc1..aaaaaaaa23vjmqg5bwvrlfiuc25wccq4xsm3nmndphh6dfyvpupqq7aeg4xa"
+user_ocid        = "ocid1.user.oc1..aaaaaaaaedmsnlvjcyudifgrg3oqimdfzkisncx7agfb7bkv7godlt7xtvzq"
+fingerprint      = "ec:9b:60:f1:63:14:b0:59:3b:3a:75:eb:bb:1a:1f:96"
 private_key_path = "~/.oci/oci_api_key.pem"
 region           = "ap-hyderabad-1"
-compartment_ocid = "ocid1.compartment.oc1..xxxxxxxx"
+compartment_ocid = "ocid1.tenancy.oc1..aaaaaaaa23vjmqg5bwvrlfiuc25wccq4xsm3nmndphh6dfyvpupqq7aeg4xa"
 ssh_public_key   = "ssh-rsa AAAA..."
 
 # If AMD Micro is available, set this to true to use it instead of Ampere A1.

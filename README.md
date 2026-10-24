@@ -170,6 +170,45 @@ All Always Free resources must be created in your tenancy **home region** (`ap-h
 
 ---
 
+## Checking A1 capacity before applying
+
+`VM.Standard.A1.Flex` can be out of capacity in some availability domains. A helper script is included to check availability and notify you when the shape is available.
+
+1. Install the OCI Python SDK:
+
+   ```bash
+   pip install oci
+   ```
+
+2. Run the check:
+
+   ```bash
+   python3 scripts/check_a1_capacity.py
+   ```
+
+   The script reads `~/.oci/config` (same credentials Terraform uses) and checks every AD in the home region.
+
+3. If capacity is available, it publishes a message to an OCI Notifications topic and emails the address in `NOTIFICATION_EMAIL` (defaults to `rahulrawat.rrc@gmail.com`).
+
+   To also send via Gmail SMTP, set:
+
+   ```bash
+   export GMAIL_USER="youraddress@gmail.com"
+   export GMAIL_APP_PASSWORD="your-app-password"
+   ```
+
+4. To run the check automatically every 15 minutes:
+
+   ```bash
+   crontab -e
+   ```
+
+   Add:
+
+   ```cron
+   */15 * * * * cd /Users/rahul/Projects/oracle-always-free && /usr/bin/python3 scripts/check_a1_capacity.py >> /tmp/check_a1_capacity.log 2>&1
+   ```
+
 ## Cleaning up
 
 To remove everything created by this project:
