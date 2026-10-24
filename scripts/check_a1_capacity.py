@@ -25,6 +25,8 @@ from email.mime.text import MIMEText
 import oci
 
 SHAPE = "VM.Standard.A1.Flex"
+OCPUS = float(os.environ.get("OCPUS", "2"))
+MEMORY_IN_GBS = float(os.environ.get("MEMORY_IN_GBS", "12"))
 PROJECT_NAME = os.environ.get("PROJECT_NAME", "oracle-always-free")
 TOPIC_NAME = f"{PROJECT_NAME}-capacity-alerts"
 RECIPIENT = os.environ.get("NOTIFICATION_EMAIL", "rahulrawat.rrc@gmail.com")
@@ -74,11 +76,15 @@ def check_capacity(compute_client, identity_client, compartment_id):
     available_ads = []
     for ad in ads:
         details = oci.core.models.CreateComputeCapacityReportDetails(
+            compartment_id=compartment_id,
             availability_domain=ad.name,
             shape_availabilities=[
                 oci.core.models.CreateCapacityReportShapeAvailabilityDetails(
-                    shape_name=SHAPE,
-                    instance_count=1,
+                    instance_shape=SHAPE,
+                    instance_shape_config=oci.core.models.CapacityReportInstanceShapeConfig(
+                        ocpus=OCPUS,
+                        memory_in_gbs=MEMORY_IN_GBS,
+                    ),
                 )
             ],
         )

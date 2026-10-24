@@ -15,7 +15,7 @@ resource "oci_identity_policy" "capacity_checker" {
   description    = "Allow AMD instances to check A1 capacity and publish notifications"
 
   statements = [
-    "Allow dynamic-group oracle-always-free-capacity-checker to manage compute-capacity-reports in tenancy",
+    "Allow dynamic-group ${oci_identity_dynamic_group.capacity_checker[0].name} to manage compute-capacity-reports in tenancy",
     "Allow dynamic-group ${oci_identity_dynamic_group.capacity_checker[0].name} to use ons-topics in compartment id ${var.compartment_ocid}",
     "Allow dynamic-group ${oci_identity_dynamic_group.capacity_checker[0].name} to read ons-subscriptions in compartment id ${var.compartment_ocid}",
   ]

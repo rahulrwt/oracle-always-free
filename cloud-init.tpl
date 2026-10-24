@@ -7,11 +7,11 @@ write_files:
   - path: /etc/default/check_a1_capacity
     permissions: "0600"
     content: |
-      USE_INSTANCE_PRINCIPAL=true
-      OCI_COMPARTMENT_OCID=${compartment_ocid}
-      NOTIFICATION_EMAIL=${notification_email}
-      OCI_REGION=${region}
-      PROJECT_NAME=${project_name}
+      export USE_INSTANCE_PRINCIPAL=true
+      export OCI_COMPARTMENT_OCID=${compartment_ocid}
+      export NOTIFICATION_EMAIL=${notification_email}
+      export OCI_REGION=${region}
+      export PROJECT_NAME=${project_name}
 
 runcmd:
   - python3 -m pip install --upgrade oci
