@@ -209,6 +209,17 @@ All Always Free resources must be created in your tenancy **home region** (`ap-h
    */15 * * * * cd /Users/rahul/Projects/oracle-always-free && /usr/bin/python3 scripts/check_a1_capacity.py >> /tmp/check_a1_capacity.log 2>&1
    ```
 
+### Running the checker on the AMD instances themselves
+
+If you set `use_amd_micro = true`, the AMD instances are configured with **Instance Principal** authentication, so they can check for A1 capacity without embedding your API private key. Terraform creates:
+
+- An IAM dynamic group for the AMD instances.
+- An IAM policy allowing the instances to read capacity reports and publish to OCI Notifications.
+- A dedicated `oracle-always-free-capacity-alerts` topic with an email subscription.
+- A cloud-init script that installs the checker and runs it every 15 minutes via cron.
+
+After the AMD instances boot, confirm the email subscription. They will email you as soon as `VM.Standard.A1.Flex` becomes available.
+
 ## Cleaning up
 
 To remove everything created by this project:
