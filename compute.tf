@@ -24,9 +24,10 @@ resource "oci_core_instance" "free" {
     assign_public_ip = true
   }
 
-  metadata = {
-    ssh_authorized_keys = file(var.ssh_public_key_path)
-  }
+  metadata = merge(
+    { ssh_authorized_keys = file(var.ssh_public_key_path) },
+    var.use_amd_micro ? { user_data = local.user_data_amd } : {}
+  )
 
   preserve_boot_volume = false
 }

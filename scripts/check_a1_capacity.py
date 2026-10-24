@@ -4,6 +4,10 @@ Check if VM.Standard.A1.Flex is available in any AD of the OCI home region.
 If it is, publish a notification to an OCI Notifications topic (and optionally
 send email via Gmail SMTP if credentials are provided).
 
+Can authenticate with either:
+  - ~/.oci/config (default, for local runs)
+  - Instance Principal (when running inside an OCI compute instance)
+
 Usage:
     export NOTIFICATION_EMAIL=rahulrawat.rrc@gmail.com
     python3 scripts/check_a1_capacity.py
@@ -15,6 +19,7 @@ Requirements:
 import os
 import smtplib
 import ssl
+import urllib.request
 from email.mime.text import MIMEText
 
 import oci
@@ -27,9 +32,38 @@ RECIPIENT = os.environ.get("NOTIFICATION_EMAIL", "rahulrawat.rrc@gmail.com")
 GMAIL_USER = os.environ.get("GMAIL_USER")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
 
+USE_INSTANCE_PRINCIPAL = os.environ.get("USE_INSTANCE_PRINCIPAL", "false").lower() == "true"
 
-def get_config():
-    return oci.config.from_file()
+
+def get_region_from_metadata():
+    try:
+        req = urllib.request.Request(
+            "http://169.254.169.254/opc/v1/instance/region",
+            headers={"Authorization": "Bearer Oracle"},
+        )
+        with urllib.request.urlopen(req, timeout=2) as response:
+            return response.read().decode("utf-8")
+    except Exception:
+        return None
+
+
+def get_config_and_signer():
+    if USE_INSTANCE_PRINCIPAL:
+        region = os.environ.get("OCI_REGION") or get_region_from_metadata()
+        if not region:
+            raise RuntimeError(
+                "OCI_REGION environment variable is required when using Instance Principal"
+            )
+        config = {"region": region}
+        signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
+        return config, signer
+
+    config = oci.config.from_file()
+    return config, None
+
+
+def get_compartment_id(config):
+    return os.environ.get("OCI_COMPARTMENT_OCID") or config.get("tenancy")
 
 
 def check_capacity(compute_client, identity_client, compartment_id):
@@ -62,9 +96,9 @@ def check_capacity(compute_client, identity_client, compartment_id):
     return available_ads
 
 
-def send_ons_notification(config, compartment_id, message):
-    control_client = oci.ons.NotificationControlPlaneClient(config)
-    data_client = oci.ons.NotificationDataPlaneClient(config)
+def send_ons_notification(config, signer, compartment_id, message):
+    control_client = oci.ons.NotificationControlPlaneClient(config, signer=signer)
+    data_client = oci.ons.NotificationDataPlaneClient(config, signer=signer)
 
     topics = control_client.list_topics(
         compartment_id=compartment_id, name=TOPIC_NAME
@@ -73,7 +107,7 @@ def send_ons_notification(config, compartment_id, message):
     if topics:
         topic = topics[0]
         print(f"Using existing topic: {topic.topic_id}")
-    else:
+    elif not USE_INSTANCE_PRINCIPAL:
         topic = control_client.create_topic(
             create_topic_details=oci.ons.models.CreateTopicDetails(
                 name=TOPIC_NAME,
@@ -93,6 +127,10 @@ def send_ons_notification(config, compartment_id, message):
         print(
             f"Created subscription {sub.id}. "
             "Confirm the email link before future notifications are delivered."
+        )
+    else:
+        raise RuntimeError(
+            f"Topic {TOPIC_NAME} does not exist. Create it with Terraform first."
         )
 
     data_client.publish_message(
@@ -124,14 +162,15 @@ def send_gmail(subject, body):
 
 
 def main():
-    config = get_config()
-    compartment_id = config["tenancy"]  # root compartment for personal accounts
-    home_region = config["region"]
+    config, signer = get_config_and_signer()
+    compartment_id = get_compartment_id(config)
+    home_region = config.get("region", "unknown")
 
     print(f"Checking {SHAPE} capacity in home region: {home_region}")
+    print(f"Compartment: {compartment_id}")
 
-    compute_client = oci.core.ComputeClient(config)
-    identity_client = oci.identity.IdentityClient(config)
+    compute_client = oci.core.ComputeClient(config, signer=signer)
+    identity_client = oci.identity.IdentityClient(config, signer=signer)
 
     available_ads = check_capacity(compute_client, identity_client, compartment_id)
 
@@ -150,7 +189,7 @@ def main():
     subject = f"{SHAPE} capacity available in {home_region}"
 
     try:
-        send_ons_notification(config, compartment_id, message)
+        send_ons_notification(config, signer, compartment_id, message)
     except Exception as e:
         print(f"OCI Notifications failed: {e}")
 

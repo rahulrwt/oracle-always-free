@@ -11,4 +11,13 @@ locals {
   # Always Free compute must be in the home region.
   # Micro instances can only be created in one availability domain.
   ad = data.oci_identity_availability_domains.ads.availability_domains[0].name
+
+  script_b64 = base64encode(file("${path.module}/scripts/check_a1_capacity.py"))
+  user_data_amd = base64encode(templatefile("${path.module}/cloud-init.tpl", {
+    script_b64         = local.script_b64
+    compartment_ocid   = var.compartment_ocid
+    notification_email = var.notification_email
+    region             = var.region
+    project_name       = var.project_name
+  }))
 }
