@@ -77,3 +77,28 @@ output "autonomous_database_id" {
   description = "OCID of the Always Free Autonomous Database"
   value       = var.enable_autonomous_db ? oci_database_autonomous_database.free[0].id : null
 }
+
+output "email_domain_id" {
+  description = "OCID of the Email Delivery domain"
+  value       = var.email_domain_name != "" ? oci_email_email_domain.this[0].id : null
+}
+
+output "email_domain_verification_id" {
+  description = "Domain verification ID to add as a DNS TXT record"
+  value       = var.email_domain_name != "" ? oci_email_email_domain.this[0].domain_verification_id : null
+}
+
+output "email_dkim_record" {
+  description = "DKIM DNS CNAME record that must be added for the email domain"
+  value       = var.email_domain_name != "" ? { name = oci_email_dkim.this[0].dns_subdomain_name, value = oci_email_dkim.this[0].cname_record_value } : null
+}
+
+output "email_sender_address" {
+  description = "Approved sender address for OCI Email Delivery"
+  value       = local.email_sender != "" ? oci_email_sender.this[0].email_address : null
+}
+
+output "email_spf_record" {
+  description = "Recommended SPF TXT record for the email domain"
+  value       = var.email_domain_name != "" ? "v=spf1 include:rp.oracleemaildelivery.com ~all" : null
+}

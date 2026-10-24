@@ -106,3 +106,15 @@ variable "autonomous_db_password" {
   default     = ""
   sensitive   = true
 }
+
+variable "email_domain_name" {
+  description = "Custom domain for OCI Email Delivery (e.g. example.com). Leave empty to skip Email Delivery."
+  type        = string
+  default     = ""
+}
+
+variable "email_sender_address" {
+  description = "Approved sender address for OCI Email Delivery. Defaults to noreply@<email_domain_name> if empty."
+  type        = string
+  default     = ""
+}

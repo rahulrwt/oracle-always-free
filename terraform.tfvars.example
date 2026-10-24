@@ -16,10 +16,14 @@ enable_load_balancer   = true
 enable_monitoring      = true
 enable_vault           = true
 enable_bastion         = true
-enable_autonomous_db   = true
+enable_autonomous_db   = false
 
 # Required when enable_autonomous_db = true.
-autonomous_db_password = "ChangeMe12345!"
+# autonomous_db_password = "ChangeMe12345!"
 
 # Optional email for CPU alarm notifications.
 notification_email     = "you@example.com"
+
+# Optional OCI Email Delivery custom domain.
+# email_domain_name    = "example.com"
+# email_sender_address = "noreply@example.com"
