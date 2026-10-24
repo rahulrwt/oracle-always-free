@@ -1,0 +1,29 @@
+tenancy_ocid        = "ocid1.tenancy.oc1..xxxxxxxxx"
+user_ocid           = "ocid1.user.oc1..xxxxxxxxx"
+fingerprint         = "aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99"
+private_key_path    = "~/.oci/oci_api_key.pem"
+region              = "ap-hyderabad-1"
+compartment_ocid    = "ocid1.compartment.oc1..xxxxxxxxx"
+ssh_public_key_path = "~/.ssh/oci_free_tier.pub"
+
+# If AMD Micro is available, set this to true to use it instead of Ampere A1.
+use_amd_micro = false
+
+# Optional toggles for Always Free services.
+enable_block_volume    = true
+enable_object_storage  = true
+enable_load_balancer   = true
+enable_monitoring      = true
+enable_vault           = true
+enable_bastion         = true
+enable_autonomous_db   = false
+
+# Required when enable_autonomous_db = true.
+# autonomous_db_password = "ChangeMe12345!"
+
+# Optional email for CPU alarm notifications and capacity alerts.
+notification_email     = "you@example.com"
+
+# Optional OCI Email Delivery custom domain.
+# email_domain_name    = "example.com"
+# email_sender_address = "noreply@example.com"
