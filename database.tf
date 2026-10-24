@@ -9,5 +9,5 @@ resource "oci_database_autonomous_database" "free" {
   cpu_core_count           = 1
   data_storage_size_in_tbs = 1
   license_model            = "LICENSE_INCLUDED"
-  admin_password           = var.autonomous_db_password
+  admin_password           = var.autonomous_db_password != "" ? var.autonomous_db_password : null
 }

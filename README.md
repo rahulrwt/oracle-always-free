@@ -17,6 +17,7 @@ Terraform setup for Oracle Cloud Infrastructure (OCI) Always Free resources in t
 | Autonomous DB | 1 Always Free Autonomous Database (optional) |
 
 > By default AMD Micro instances are **not** used because the shape is often out of capacity. Set `use_amd_micro = true` to try it instead.
+> Autonomous Database is also **disabled by default**. Set `enable_autonomous_db = true` and provide `autonomous_db_password` (minimum 12 characters) to create it.
 
 ## Quick start
 

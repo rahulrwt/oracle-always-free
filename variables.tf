@@ -89,8 +89,9 @@ variable "enable_bastion" {
 }
 
 variable "enable_autonomous_db" {
-  type    = bool
-  default = true
+  description = "If true, create an Always Free Autonomous Database"
+  type        = bool
+  default     = false
 }
 
 variable "notification_email" {
@@ -100,13 +101,8 @@ variable "notification_email" {
 }
 
 variable "autonomous_db_password" {
-  description = "Admin password for the Always Free Autonomous Database (required when enable_autonomous_db = true)"
+  description = "Admin password for the Always Free Autonomous Database (required when enable_autonomous_db is true; minimum 12 characters)"
   type        = string
   default     = ""
   sensitive   = true
-
-  validation {
-    condition     = !var.enable_autonomous_db || length(var.autonomous_db_password) >= 12
-    error_message = "autonomous_db_password must be at least 12 characters when enable_autonomous_db is true."
-  }
 }

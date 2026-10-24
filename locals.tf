@@ -1,6 +1,6 @@
 locals {
-  shape        = var.use_amd_micro ? "VM.Standard.E2.1.Micro" : "VM.Standard.A1.Flex"
-  shape_suffix = var.use_amd_micro ? "amd" : "a1"
+  shape          = var.use_amd_micro ? "VM.Standard.E2.1.Micro" : "VM.Standard.A1.Flex"
+  shape_suffix   = var.use_amd_micro ? "amd" : "a1"
   instance_count = 2
 
   # Ampere A1 free-tier total: 2 OCPUs / 12 GB memory.

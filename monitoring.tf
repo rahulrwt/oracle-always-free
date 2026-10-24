@@ -8,9 +8,10 @@ resource "oci_ons_notification_topic" "free" {
 resource "oci_ons_subscription" "free" {
   count = var.enable_monitoring && var.notification_email != "" ? 1 : 0
 
-  topic_id = oci_ons_notification_topic.free[0].id
-  protocol = "EMAIL"
-  endpoint = var.notification_email
+  compartment_id = var.compartment_ocid
+  topic_id       = oci_ons_notification_topic.free[0].id
+  protocol       = "EMAIL"
+  endpoint       = var.notification_email
 }
 
 resource "oci_monitoring_alarm" "high_cpu" {
