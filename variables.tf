@@ -29,9 +29,10 @@ variable "compartment_ocid" {
   type        = string
 }
 
-variable "ssh_public_key" {
-  description = "SSH public key string used to access the compute instances"
+variable "ssh_public_key_path" {
+  description = "Path to the SSH public key file used to access the compute instances"
   type        = string
+  default     = "~/.ssh/oci_free_tier.pub"
 }
 
 variable "project_name" {

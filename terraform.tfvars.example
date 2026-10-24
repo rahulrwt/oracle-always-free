@@ -4,7 +4,7 @@ fingerprint      = "ec:9b:60:f1:63:14:b0:59:3b:3a:75:eb:bb:1a:1f:96"
 private_key_path = "~/.oci/oci_api_key.pem"
 region           = "ap-hyderabad-1"
 compartment_ocid = "ocid1.tenancy.oc1..aaaaaaaa23vjmqg5bwvrlfiuc25wccq4xsm3nmndphh6dfyvpupqq7aeg4xa"
-ssh_public_key   = "ssh-rsa AAAA..."
+ssh_public_key_path = "~/.ssh/oci_free_tier.pub"
 
 # If AMD Micro is available, set this to true to use it instead of Ampere A1.
 use_amd_micro = false

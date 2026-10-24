@@ -91,16 +91,16 @@ For a personal Free Tier account, use the **root compartment** OCID.
 2. Edit `terraform.tfvars` with the values you collected:
 
    ```hcl
-   tenancy_ocid     = "ocid1.tenancy.oc1..xxxxxxxxx"
-   user_ocid        = "ocid1.user.oc1..xxxxxxxxx"
-   fingerprint      = "aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99"
-   private_key_path = "~/.oci/oci_api_key.pem"
-   region           = "ap-hyderabad-1"
-   compartment_ocid = "ocid1.compartment.oc1..xxxxxxxxx"
-   ssh_public_key   = "ssh-rsa AAAA..."
+   tenancy_ocid        = "ocid1.tenancy.oc1..xxxxxxxxx"
+   user_ocid           = "ocid1.user.oc1..xxxxxxxxx"
+   fingerprint         = "aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99"
+   private_key_path    = "~/.oci/oci_api_key.pem"
+   region              = "ap-hyderabad-1"
+   compartment_ocid    = "ocid1.compartment.oc1..xxxxxxxxx"
+   ssh_public_key_path = "~/.ssh/oci_free_tier.pub"
    ```
 
-   For `ssh_public_key`, paste the contents of `~/.ssh/oci_free_tier.pub`.
+   The SSH public key is read from the file path. Make sure the file exists.
 
 3. Review the optional service toggles:
 
@@ -229,7 +229,7 @@ export TF_VAR_user_ocid="ocid1.user.oc1..xxxxxxxxx"
 export TF_VAR_fingerprint="aa:bb:cc:..."
 export TF_VAR_private_key_path="~/.oci/oci_api_key.pem"
 export TF_VAR_compartment_ocid="ocid1.compartment.oc1..xxxxxxxxx"
-export TF_VAR_ssh_public_key="$(cat ~/.ssh/oci_free_tier.pub)"
+export TF_VAR_ssh_public_key_path="~/.ssh/oci_free_tier.pub"
 ```
 
 Then run `terraform plan` and `terraform apply` as usual.

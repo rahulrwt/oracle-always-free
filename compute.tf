@@ -25,7 +25,7 @@ resource "oci_core_instance" "free" {
   }
 
   metadata = {
-    ssh_authorized_keys = var.ssh_public_key
+    ssh_authorized_keys = file(var.ssh_public_key_path)
   }
 
   preserve_boot_volume = false
